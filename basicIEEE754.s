@@ -10,7 +10,7 @@ main:
 	str x30, [sp, #0]
 	str x19, [sp, #8]
 
-	mov x19, #-5	// number to be tested
+	mov x19, #0	// number to be tested
 	mov x0, x19
 	bl encodeIEEE754D64
 	fmov d0, x0
@@ -35,6 +35,8 @@ encodeIEEE754D64:
 	// use temporal x9 to store recieved number, and x0 for answer
 	mov x9, x0
 	mov x0, xzr
+	cmp x9, xzr
+	b.eq encodeIEEE754D64_exit
 
 	// start with the sign
 	cmp x9, xzr

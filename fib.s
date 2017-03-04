@@ -21,7 +21,7 @@ main:
 
 	ldr x0, =string
 	bl printf
-	
+
 	// ender
 	ldr	x30, [sp]
 	add sp, sp, 16
@@ -62,7 +62,7 @@ isOne:
 	mov x0, #1
 	b fibEnder
 
-isZero:	
+isZero:
 	mov x0, #0
 
 fibEnder:

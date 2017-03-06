@@ -10,7 +10,7 @@ main:
 	str x30, [sp, #0]
 	str x19, [sp, #8]
 
-	mov x19, #0	// number to be tested
+	mov x19, #-1240	// number to be tested
 	mov x0, x19
 	bl encodeIEEE754D64
 	fmov d0, x0
@@ -49,15 +49,16 @@ encodeIEEE754D64:
 
 encodeIEEE754D64_encodeBias:
 	mov x10, #0		// init accum, this will tell me how many shifts I did (or equivalently, where was the firstOne)
-	mov x11, 0x4000000000000000	// set the most significant bit to one so I can compare against this number
+	mov x11, 0x8000000000000000	// set the most significant bit to one so I can compare against this number
 
 // search for the firstOne from left to right
 encodeIEEE754D64_firstOne:
-	and x12, x9, x11
+	//and x12, x9, x11
         lsl x9, x9, #1          // shift the whole number left until i find the first one
         add x10, x10, #1        // how many shifts have i done
+        and x12, x9, x11
 	cmp x12, xzr
-	b.gt encodeIEEE754D64_foundFirstOne	// found it!
+	b.ne encodeIEEE754D64_foundFirstOne	// found it!
 	cmp x10, #64
 	b.ge encodeIEEE754D64_foundFirstOne	// there are no ones!
 	b encodeIEEE754D64_firstOne
@@ -70,7 +71,7 @@ encodeIEEE754D64_foundFirstOne:	// now that i've found it, I can calculate bias 
 	orr x0, x0, x13		// place the bias in return value
 
 encodeIEEE754D64_encodeMantissa:
-	and x9, x9, #0x7FFFFFFFFFFFFFFF	// elimino el primer uno dado que este esta implicito en la codificacion
+	//and x9, x9, #0x7FFFFFFFFFFFFFFF	// elimino el primer uno dado que este esta implicito en la codificacion
 	lsr x9, x9, #11		// since we had been shifting x9, we eliminated all zeros and only have the significand here
 	orr x0, x0, x9
 
